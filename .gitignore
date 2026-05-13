@@ -1,0 +1,5 @@
+outputs/*
+!outputs/.gitkeep
+
+__pycache__/
+data_files/
