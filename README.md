@@ -11,8 +11,10 @@ cvleaf/
 ├── config.py                  全局超参数配置
 ├── main.py                    训练主入口
 ├── analyze.py                 参数量与特征图尺寸分析 (基础任务 3.1.1)
-├── ablation_aug.py            进阶 #2: 数据增强策略对比
-├── visualize_features.py      进阶 #4: 卷积核 & 特征图可视化
+├── ablation_aug.py            进阶 #1: 数据增强策略对比
+├── visualize_features.py      进阶 #2: 卷积核 & 特征图可视化
+├── ablation_resolution.py     进阶 #3: 输入分辨率对比实验
+├── ablation_regularization.py 进阶 #4: 正则化策略对比
 ├── models/
 │   ├── alexnet.py             AlexNet (小分辨率适配)
 │   └── vgg16.py               VGG16 (BN + 显存优化)
@@ -71,7 +73,7 @@ python main.py --dataset fashion_mnist --model alexnet --epochs 30
 
 ### 3. 进阶实验
 
-#### (a) 数据增强策略对比（进阶 #2）
+#### (a) 数据增强策略对比（进阶 #1）
 
 ```bash
 python ablation_aug.py --dataset cifar100 --model alexnet --epochs 30
@@ -80,7 +82,7 @@ python ablation_aug.py --dataset cifar100 --model alexnet --epochs 30
 对比 `basic (仅水平翻转)` 与 `strong (RandomCrop + ColorJitter + Cutout)`，输出到
 `outputs/ablation_aug_cifar100_alexnet/`，含对比曲线、Top-1 数值与分析报告。
 
-#### (b) 卷积核与中间层特征图可视化（进阶 #4）
+#### (b) 卷积核与中间层特征图可视化（进阶 #2）
 
 ```bash
 python visualize_features.py --dataset cifar100 --model alexnet \
@@ -88,6 +90,22 @@ python visualize_features.py --dataset cifar100 --model alexnet \
 ```
 
 输出 `filters_layer0/1.png`（学到的边缘/纹理滤波器）与 `feature_maps.png`（前 4 层卷积的特征图）。
+
+#### (c) 输入分辨率对比实验（进阶 #3）
+
+```bash
+python ablation_resolution.py --dataset cifar100 --model alexnet --epochs 30
+```
+
+对比数据集原始分辨率（如 CIFAR-100 的 32×32）与缩放至 224×224 两种设置，记录 Top-1 精度与每 epoch 训练耗时，分析分辨率对 CNN 模型性能与速度的影响。输出到 `outputs/ablation_resolution_<dataset>_<model>/`，含对比曲线与分析报告。
+
+#### (d) 正则化策略对比（进阶 #4）
+
+```bash
+python ablation_regularization.py --dataset cifar100 --model alexnet --epochs 30
+```
+
+对比三种正则化策略：不同 Dropout 比例（0 / 0.3 / 0.5）、Batch Normalization 开关、L2 权重衰减（0 / 1e-4 / 5e-4），记录各策略的收敛曲线与最终测试精度，总结最优正则化方案。输出到 `outputs/ablation_reg_<dataset>_<model>/`，含对比曲线与分析报告。
 
 ## 训练配置说明
 
